@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
+import cloudpickle
 import matplotlib.pyplot as plt
 import seaborn as sns
 import requests
@@ -10,13 +10,15 @@ import io
 # === Load model and EMT score distribution from Google Drive ===
 @st.cache_resource
 def load_model_and_data():
-    # Google Drive direct download links (replace with final export links)
+    # Google Drive direct download links
     model_url = "https://drive.google.com/uc?export=download&id=1Z-BoP5x2b13csQU1lJSJAxWt_2ZCi727"
     data_url = "https://drive.google.com/uc?export=download&id=1-rJKiqZAOv71BBwCwkWUKxEbsnlyDYx5"
 
+    # Load model using cloudpickle
     model_bytes = requests.get(model_url).content
-    model = joblib.load(io.BytesIO(model_bytes))
+    model = cloudpickle.load(io.BytesIO(model_bytes))
 
+    # Load dataset
     data_bytes = requests.get(data_url).content
     df = pd.read_csv(io.BytesIO(data_bytes), index_col=0)
     df = df.drop(index="PC1_weight", errors="ignore")
